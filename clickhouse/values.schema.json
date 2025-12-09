@@ -4,6 +4,11 @@
   "title": "ClickHouse Helm Chart Values",
   "description": "Schema for ClickHouse Helm chart values",
   "properties": {
+    "global": {
+      "type": "object",
+      "description": "Global settings that can be used by parent charts or overrides",
+      "additionalProperties": true
+    },
     "timezone": {
       "type": "string",
       "description": "Timezone",
@@ -493,7 +498,7 @@
                   "default": "1000M"
                 },
                 "count": {
-                  "type": "integer",
+                  "type": ["integer", "string"],
                   "default": 10
                 },
                 "stdoutLogsEnabled": {
@@ -977,14 +982,14 @@
           "additionalProperties": true
         },
         "podAnnotations": {
-          "type": "object",
+          "type": ["object", "null"],
           "description": "Pod annotations",
           "additionalProperties": {
             "type": "string"
           }
         },
         "podLabels": {
-          "type": "object",
+          "type": ["object", "null"],
           "description": "Additional Labels",
           "additionalProperties": {
             "type": "string"
@@ -1007,6 +1012,7 @@
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }
+
 

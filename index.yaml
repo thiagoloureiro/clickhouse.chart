@@ -3,11 +3,11 @@ entries:
   clickhouse:
   - apiVersion: v1
     appVersion: "25.11"
-    created: "2025-12-05T10:54:40.3568269-05:00"
+    created: "2025-12-09T11:26:17.3719521-05:00"
     description: ClickHouse is an open-source column-oriented OLAP database (Online
       Analytical Processing) designed for very fast analytical queries on large volumes
       of data.
-    digest: e952085eaa82ca09c69dca75b02cbee92e927e9739f3792adb23d8bb991295c1
+    digest: c1e3d917480716ab837e5e4ee36b79823fbb5494407253ff40ea9690d6f0441e
     home: https://github.com/thiagoloureiro/AlertHawk.Chart
     icon: https://clickhouse.yandex/images/logo.png
     keywords:
@@ -22,4 +22,4 @@ entries:
     urls:
     - https://thiagoloureiro.github.io/clickhouse.chart/clickhouse-25.11.tgz
     version: "25.11"
-generated: "2025-12-05T10:54:40.3531155-05:00"
+generated: "2025-12-09T11:26:17.3698756-05:00"
