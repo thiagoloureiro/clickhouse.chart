@@ -15,8 +15,8 @@ A Helm chart for deploying ClickHouse on Kubernetes. ClickHouse is an open-sourc
 
 ## Chart Details
 
-- **Chart Version**: 25.11
-- **App Version**: 25.11
+- **Chart Version**: 25.12
+- **App Version**: 25.12
 - **Maintainer**: thiagoloureiro
 
 ## Installation
@@ -48,7 +48,7 @@ The following table lists the most important configurable parameters and their d
 |-----------|-------------|---------|
 | `clickhouse.replicas` | Number of ClickHouse replicas | `3` |
 | `clickhouse.image` | ClickHouse image | `clickhouse/clickhouse-server` |
-| `clickhouse.imageVersion` | ClickHouse image version | `25.11` |
+| `clickhouse.imageVersion` | ClickHouse image version | `25.12` |
 | `clickhouse.persistentVolumeClaim.enabled` | Enable persistent volumes | `true` |
 | `clickhouse.persistentVolumeClaim.dataPersistentVolume.storage` | Data volume size | `100Gi` |
 | `clickhouse.metrics.enabled` | Enable Prometheus metrics | `true` |

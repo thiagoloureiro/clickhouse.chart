@@ -238,7 +238,7 @@
         "imageVersion": {
           "type": "string",
           "description": "Clickhouse image version",
-          "default": "25.11"
+          "default": "25.12"
         },
         "imagePullPolicy": {
           "type": "string",

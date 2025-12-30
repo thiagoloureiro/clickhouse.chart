@@ -120,7 +120,7 @@ clickhouse:
   replicas: "3"
   ## Clickhouse image configuration.
   image: "clickhouse/clickhouse-server"
-  imageVersion: "25.11"
+  imageVersion: "25.12"
   imagePullPolicy: "IfNotPresent"
 
   priorityClassName: ~
