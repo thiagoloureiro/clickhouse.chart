@@ -3,7 +3,28 @@ entries:
   clickhouse:
   - apiVersion: v1
     appVersion: "25.12"
-    created: "2026-01-03T11:59:58.16672-05:00"
+    created: "2026-01-03T12:06:11.529735-05:00"
+    description: ClickHouse is an open-source column-oriented OLAP database (Online
+      Analytical Processing) designed for very fast analytical queries on large volumes
+      of data.
+    digest: 96bc10600455d18cf6b9e2fcaf08433818d89ca3499ad78bc3cbf4859128ec77
+    home: https://github.com/thiagoloureiro/AlertHawk.Chart
+    icon: https://clickhouse.yandex/images/logo.png
+    keywords:
+    - clickhouse
+    - olap
+    - database
+    maintainers:
+    - name: thiagoloureiro
+    name: clickhouse
+    sources:
+    - https://github.com/thiagoloureiro/clickhouse.chart
+    urls:
+    - https://thiagoloureiro.github.io/clickhouse.chart/clickhouse-25.16.tgz
+    version: "25.16"
+  - apiVersion: v1
+    appVersion: "25.12"
+    created: "2026-01-03T12:06:11.529047-05:00"
     description: ClickHouse is an open-source column-oriented OLAP database (Online
       Analytical Processing) designed for very fast analytical queries on large volumes
       of data.
@@ -24,7 +45,7 @@ entries:
     version: "25.15"
   - apiVersion: v1
     appVersion: "25.12"
-    created: "2026-01-03T11:59:58.165961-05:00"
+    created: "2026-01-03T12:06:11.527935-05:00"
     description: ClickHouse is an open-source column-oriented OLAP database (Online
       Analytical Processing) designed for very fast analytical queries on large volumes
       of data.
@@ -45,7 +66,7 @@ entries:
     version: "25.14"
   - apiVersion: v1
     appVersion: "25.12"
-    created: "2026-01-03T11:59:58.164339-05:00"
+    created: "2026-01-03T12:06:11.526883-05:00"
     description: ClickHouse is an open-source column-oriented OLAP database (Online
       Analytical Processing) designed for very fast analytical queries on large volumes
       of data.
@@ -66,7 +87,7 @@ entries:
     version: "25.13"
   - apiVersion: v1
     appVersion: "25.13"
-    created: "2026-01-03T11:59:58.163133-05:00"
+    created: "2026-01-03T12:06:11.525574-05:00"
     description: ClickHouse is an open-source column-oriented OLAP database (Online
       Analytical Processing) designed for very fast analytical queries on large volumes
       of data.
@@ -87,7 +108,7 @@ entries:
     version: "25.12"
   - apiVersion: v1
     appVersion: "25.11"
-    created: "2026-01-03T11:59:58.161359-05:00"
+    created: "2026-01-03T12:06:11.524567-05:00"
     description: ClickHouse is an open-source column-oriented OLAP database (Online
       Analytical Processing) designed for very fast analytical queries on large volumes
       of data.
@@ -106,4 +127,4 @@ entries:
     urls:
     - https://thiagoloureiro.github.io/clickhouse.chart/clickhouse-25.11.tgz
     version: "25.11"
-generated: "2026-01-03T11:59:58.160133-05:00"
+generated: "2026-01-03T12:06:11.523169-05:00"
