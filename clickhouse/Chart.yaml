@@ -10,6 +10,6 @@ keywords:
 name: clickhouse
 sources:
   - https://github.com/thiagoloureiro/clickhouse.chart
-version: '25.16'
+version: '25.17'
 maintainers:
   - name: thiagoloureiro
