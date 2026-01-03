@@ -72,8 +72,15 @@ spec:
         image: {{ .Values.clickhouse.configmap.keeper.image }}:{{ .Values.clickhouse.configmap.keeper.imageVersion | default .Chart.AppVersion }}
         imagePullPolicy: {{ .Values.clickhouse.configmap.keeper.imagePullPolicy }}
         command:
-          - /usr/bin/clickhouse-keeper
-          - --config-file=/etc/clickhouse-keeper/config.d/keeper_config.xml
+          - /bin/bash
+          - -c
+          - |
+            # Ensure directories exist
+            mkdir -p {{ .Values.clickhouse.configmap.keeper.path }}/coordination/log
+            mkdir -p {{ .Values.clickhouse.configmap.keeper.path }}/coordination/snapshots
+            mkdir -p {{ .Values.clickhouse.configmap.keeper.log_path }}
+            # Start clickhouse-keeper
+            exec /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-keeper/config.d/keeper_config.xml
         ports:
         - name: client-port
           containerPort: {{ .Values.clickhouse.configmap.keeper.client_port }}
@@ -84,6 +91,16 @@ spec:
         - name: metrics-port
           containerPort: {{ .Values.clickhouse.configmap.keeper.metrics_port }}
           protocol: TCP
+        {{- if .Values.clickhouse.configmap.keeper.startupProbe.enabled }}
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.clickhouse.configmap.keeper.client_port }}
+          initialDelaySeconds: {{ .Values.clickhouse.configmap.keeper.startupProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.clickhouse.configmap.keeper.startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.clickhouse.configmap.keeper.startupProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.clickhouse.configmap.keeper.startupProbe.failureThreshold }}
+          successThreshold: {{ .Values.clickhouse.configmap.keeper.startupProbe.successThreshold }}
+        {{- end }}
         {{- if .Values.clickhouse.configmap.keeper.livenessProbe.enabled }}
         livenessProbe:
           tcpSocket:
