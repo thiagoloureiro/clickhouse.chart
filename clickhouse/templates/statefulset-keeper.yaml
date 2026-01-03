@@ -115,7 +115,6 @@ spec:
           mountPath: {{ .Values.clickhouse.configmap.keeper.log_path }}
         - name: {{ include "clickhouse.fullname" . }}-keeper-config
           mountPath: /etc/clickhouse-keeper/config.d
-          readOnly: true
       {{- with .Values.clickhouse.configmap.keeper.securityContext }}
         securityContext:
           {{- toYaml . | nindent 10 }}
