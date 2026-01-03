@@ -11,10 +11,10 @@ data:
   keeper_config.xml: |-
     <?xml version="1.0"?>
     <yandex>
+        <listen_host>0.0.0.0</listen_host>
         <keeper_server>
             <tcp_port>{{ .Values.clickhouse.configmap.keeper.client_port }}</tcp_port>
             <tcp_port_secure>0</tcp_port_secure>
-            <listen_host>0.0.0.0</listen_host>
             <server_id>__SERVER_ID__</server_id>
             <log_storage_path>{{ .Values.clickhouse.configmap.keeper.path }}/coordination/log</log_storage_path>
             <snapshot_storage_path>{{ .Values.clickhouse.configmap.keeper.path }}/coordination/snapshots</snapshot_storage_path>
