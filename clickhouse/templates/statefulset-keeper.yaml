@@ -112,10 +112,15 @@ spec:
             
             echo "Using binary: $KEEPER_BIN"
             echo "Config file: $CONFIG_FILE"
-            echo "Starting clickhouse-keeper..."
             
-            # Start keeper and capture output
-            exec $KEEPER_BIN --config-file="$CONFIG_FILE" 2>&1
+            # Show config for debugging (first 30 lines)
+            echo "=== Config file preview (first 30 lines) ==="
+            head -30 "$CONFIG_FILE" || true
+            echo "=== End config preview ==="
+            
+            # Start keeper in foreground - it should stay running
+            echo "Starting clickhouse-keeper (this should stay running)..."
+            exec $KEEPER_BIN --config-file="$CONFIG_FILE"
         ports:
         - name: client-port
           containerPort: {{ .Values.clickhouse.configmap.keeper.client_port }}

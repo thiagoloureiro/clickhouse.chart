@@ -51,9 +51,7 @@ data:
             <errorlog>{{ printf "%s/%s" .Values.clickhouse.configmap.keeper.log_path "clickhouse-keeper.err.log" }}</errorlog>
             <size>{{ .Values.clickhouse.configmap.logger.size | default "1000M" }}</size>
             <count>{{ .Values.clickhouse.configmap.keeper.logs_to_keep }}</count>
-            {{- if .Values.clickhouse.configmap.logger.stdoutLogsEnabled }}
             <console>1</console>
-            {{- end }}
         </logger>
     </yandex>
 {{- end }}
