@@ -75,12 +75,47 @@ spec:
           - /bin/bash
           - -c
           - |
+            set -e
+            echo "=== ClickHouse Keeper Startup ==="
+            
             # Ensure directories exist
+            echo "Creating directories..."
             mkdir -p {{ .Values.clickhouse.configmap.keeper.path }}/coordination/log
             mkdir -p {{ .Values.clickhouse.configmap.keeper.path }}/coordination/snapshots
             mkdir -p {{ .Values.clickhouse.configmap.keeper.log_path }}
-            # Start clickhouse-keeper
-            exec /usr/bin/clickhouse-keeper --config-file=/etc/clickhouse-keeper/config.d/keeper_config.xml
+            
+            # Verify config file exists
+            CONFIG_FILE="/etc/clickhouse-keeper/config.d/keeper_config.xml"
+            if [ ! -f "$CONFIG_FILE" ]; then
+              echo "ERROR: Config file not found at $CONFIG_FILE"
+              ls -la /etc/clickhouse-keeper/config.d/ || true
+              exit 1
+            fi
+            
+            # Verify server_id was replaced
+            if grep -q "__SERVER_ID__" "$CONFIG_FILE"; then
+              echo "ERROR: Server ID placeholder not replaced in config!"
+              exit 1
+            fi
+            
+            # Check for clickhouse-keeper binary
+            if [ -f /usr/bin/clickhouse-keeper ]; then
+              KEEPER_BIN="/usr/bin/clickhouse-keeper"
+            elif [ -f /usr/local/bin/clickhouse-keeper ]; then
+              KEEPER_BIN="/usr/local/bin/clickhouse-keeper"
+            else
+              echo "ERROR: clickhouse-keeper binary not found in /usr/bin or /usr/local/bin"
+              echo "Searching for clickhouse binaries..."
+              find /usr -name "*clickhouse*" -type f 2>/dev/null | head -10 || true
+              exit 1
+            fi
+            
+            echo "Using binary: $KEEPER_BIN"
+            echo "Config file: $CONFIG_FILE"
+            echo "Starting clickhouse-keeper..."
+            
+            # Start keeper and capture output
+            exec $KEEPER_BIN --config-file="$CONFIG_FILE" 2>&1
         ports:
         - name: client-port
           containerPort: {{ .Values.clickhouse.configmap.keeper.client_port }}
