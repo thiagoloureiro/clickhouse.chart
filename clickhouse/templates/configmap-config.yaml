@@ -79,6 +79,7 @@ data:
         </remote_servers>
         {{- end }}
         <zookeeper incl="zookeeper-servers" optional="true" />
+        <keeper incl="keeper-servers" optional="true" />
         <macros incl="macros" optional="true" />
         <builtin_dictionaries_reload_interval>{{ .Values.clickhouse.configmap.builtin_dictionaries_reload_interval | default "3600" }}</builtin_dictionaries_reload_interval>
         <max_session_timeout>{{ .Values.clickhouse.configmap.max_session_timeout | default "3600" }}</max_session_timeout>

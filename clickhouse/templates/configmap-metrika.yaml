@@ -32,6 +32,19 @@ data:
         </zookeeper-servers>
         {{- end }}
 
+        {{- if .Values.clickhouse.configmap.keeper.enabled }}
+        <keeper-servers>
+            {{- range untilStep 0 (int .Values.clickhouse.configmap.keeper.replicas) 1 }}
+            <node>
+                <host>{{ include "clickhouse.fullname" $ }}-keeper-{{ . }}.{{ include "clickhouse.fullname" $ }}-keeper-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}</host>
+                <port>{{ $.Values.clickhouse.configmap.keeper.client_port }}</port>
+            </node>
+            {{- end }}
+            <session_timeout_ms>{{ .Values.clickhouse.configmap.keeper.session_timeout_ms }}</session_timeout_ms>
+            <operation_timeout_ms>{{ .Values.clickhouse.configmap.keeper.operation_timeout_ms }}</operation_timeout_ms>
+        </keeper-servers>
+        {{- end }}
+
         {{- if .Values.clickhouse.configmap.remote_servers.enabled }}
         <clickhouse_remote_servers>
             <{{ include "clickhouse.fullname" . }}>
