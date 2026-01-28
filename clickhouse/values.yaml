@@ -300,7 +300,7 @@ clickhouse:
       replicas: 3
       ## Keeper image configuration (uses same image as ClickHouse by default)
       image: "clickhouse/clickhouse-server"
-      imageVersion: "25.12"
+      imageVersion: "25.12.4"
       imagePullPolicy: "IfNotPresent"
       ## Keeper ports
       client_port: 2181
