@@ -15,8 +15,8 @@ A Helm chart for deploying ClickHouse on Kubernetes. ClickHouse is an open-sourc
 
 ## Chart Details
 
-- **Chart Version**: 25.12
-- **App Version**: 25.12
+- **Chart Version**: 26.1
+- **App Version**: 26.1
 - **Maintainer**: thiagoloureiro
 
 ## Installation
