@@ -394,6 +394,10 @@
               "type": "boolean",
               "default": false
             },
+            "ingressClassName": {
+              "type": ["string", "null"],
+              "description": "Optional IngressClass name (spec.ingressClassName). Set when your cluster requires a specific ingress controller."
+            },
             "host": {
               "type": "string"
             },

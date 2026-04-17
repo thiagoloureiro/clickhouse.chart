@@ -125,7 +125,7 @@ clickhouse:
   replicas: "3"
   ## Clickhouse image configuration.
   image: "clickhouse/clickhouse-server"
-  imageVersion: "26.1"
+  imageVersion: "26.2"
   imagePullPolicy: "IfNotPresent"
 
   priorityClassName: ~
@@ -179,6 +179,7 @@ clickhouse:
   ## Ingress can provide load balancing, SSL termination and name-based virtual hosting.
   ingress:
     enabled: false
+  #  ingressClassName: "nginx"
   #  host: "clickhouse.domain.com"
   #  path: "/"
   #  tls:
