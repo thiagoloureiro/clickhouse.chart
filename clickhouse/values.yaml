@@ -125,7 +125,7 @@ clickhouse:
   replicas: "3"
   ## Clickhouse image configuration.
   image: "clickhouse/clickhouse-server"
-  imageVersion: "26.2"
+  imageVersion: "26.5"
   imagePullPolicy: "IfNotPresent"
 
   priorityClassName: ~
@@ -301,7 +301,7 @@ clickhouse:
       replicas: 3
       ## Keeper image configuration (uses same image as ClickHouse by default)
       image: "clickhouse/clickhouse-server"
-      imageVersion: "25.12.4"
+      imageVersion: "26.5"
       imagePullPolicy: "IfNotPresent"
       ## Keeper ports
       client_port: 2181
