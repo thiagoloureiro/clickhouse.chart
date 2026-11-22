@@ -26,7 +26,7 @@ A Helm chart for deploying ClickHouse on Kubernetes. ClickHouse is an open-sourc
 
 | | |
 |---|---|
-| **Chart Version** | `26.12` |
+| **Chart Version** | `26.13` |
 | **App Version** | `26.10.3.7` |
 | **Default Image** | `clickhouse/clickhouse-server:26.10.3.7` |
 | **DHI Image** | `dhi.io/clickhouse-server:26.10` |
