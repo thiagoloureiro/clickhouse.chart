@@ -119,9 +119,10 @@ clickhouse:
   ## The instance number of Clickhouse
   ## IMPORTANT: This controls:
   ##   - Number of pods in the main ClickHouse StatefulSet
-  ##   - Number of pods in the replica ClickHouse StatefulSet (if backup.enabled is true)
+  ##   - Number of pods in the replica ClickHouse StatefulSet (if remote_servers.replica.backup.enabled is true)
   ##   - Number of shards in the cluster configuration
-  ##   Example: If set to "3", you get 3 main pods + 3 replica pods (if backup enabled) = 6 total ClickHouse pods
+  ##   Example: replicas=3 + backup.enabled=true => 3 shards, 2 replicas each (6 ClickHouse pods)
+  ## For ReplicatedMergeTree data sync you also need Keeper or ZooKeeper enabled.
   replicas: "3"
   ## Clickhouse image configuration.
   ## Default: official ClickHouse image. Set dhi.enabled to use Docker Hardened Images.
@@ -305,8 +306,10 @@ clickhouse:
         port: ""
     ##
     ## ClickHouse Keeper configuration
-    ## ClickHouse Keeper is a coordination service (similar to ZooKeeper) built into ClickHouse.
-    ## It's used for storing metadata of replicas when using replicated tables.
+    ## ClickHouse Keeper is a coordination service (similar to ZooKeeper).
+    ## Required for ReplicatedMergeTree / ON CLUSTER DDL. Nodes are published under
+    ## ClickHouse's <zookeeper> config section (that is how ClickHouse talks to Keeper).
+    ## Do not enable together with zookeeper_servers.
     keeper:
       enabled: false
       ## Number of ClickHouse Keeper replicas
@@ -398,13 +401,17 @@ clickhouse:
     # compression - Use data compression. Default value: true.
     remote_servers:
       enabled: true
-      internal_replication: false
+      ## true = Distributed writes to one replica; Replicated* engines sync via Keeper/ZK
+      ## false = Distributed writes to every replica in the shard (no Replicated* sync)
+      internal_replication: true
       replica:
         user: "default"
         # password: ""
         compression: true
+        ## Second StatefulSet (clickhouse-replica-*) paired into each shard.
+        ## Enable together with keeper (or zookeeper) + ReplicatedMergeTree for real HA sync.
         backup:
-          enabled: true
+          enabled: false
     ##
     ## Sending data to Graphite.
     # interval – The interval for sending, in seconds.

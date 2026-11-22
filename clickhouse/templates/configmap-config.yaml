@@ -25,6 +25,11 @@ data:
         <http_port>{{ .Values.clickhouse.http_port | default "8123" }}</http_port>
         <tcp_port>{{ .Values.clickhouse.tcp_port | default "9000" }}</tcp_port>
         <interserver_http_port>{{ .Values.clickhouse.interserver_http_port | default "9009" }}</interserver_http_port>
+        {{- if .Values.clickhouse.configmap.interserver_http_host }}
+        <interserver_http_host>{{ .Values.clickhouse.configmap.interserver_http_host }}</interserver_http_host>
+        {{- else }}
+        <interserver_http_host from_env="CLICKHOUSE_INTERSERVER_HTTP_HOST"></interserver_http_host>
+        {{- end }}
         <max_connections>{{ .Values.clickhouse.configmap.max_connections | default "4096" }}</max_connections>
         <keep_alive_timeout>{{ .Values.clickhouse.configmap.keep_alive_timeout | default "3" }}</keep_alive_timeout>
         <max_concurrent_queries>{{ .Values.clickhouse.configmap.max_concurrent_queries | default "100" }}</max_concurrent_queries>
@@ -38,7 +43,7 @@ data:
             <{{ include "clickhouse.fullname" . }}>
             {{- range untilStep 0 (int .Values.clickhouse.replicas) 1 }}
                 <shard>
-                    <internal_replication>{{ $.Values.clickhouse.configmap.remote_servers.internal_replication | default "false" }}</internal_replication>
+                    <internal_replication>{{ $.Values.clickhouse.configmap.remote_servers.internal_replication }}</internal_replication>
                     <replica>
                         <host>{{ include "clickhouse.fullname" $ }}-{{ . }}.{{ include "clickhouse.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}</host>
                         <port>{{ $.Values.clickhouse.tcp_port}}</port>
@@ -78,8 +83,8 @@ data:
             </{{ include "clickhouse.fullname" . }}>
         </remote_servers>
         {{- end }}
+        {{/* Keeper and ZooKeeper both map into <zookeeper> — ClickHouse has no separate <keeper> client section */}}
         <zookeeper incl="zookeeper-servers" optional="true" />
-        <keeper incl="keeper-servers" optional="true" />
         <macros incl="macros" optional="true" />
         <builtin_dictionaries_reload_interval>{{ .Values.clickhouse.configmap.builtin_dictionaries_reload_interval | default "3600" }}</builtin_dictionaries_reload_interval>
         <max_session_timeout>{{ .Values.clickhouse.configmap.max_session_timeout | default "3600" }}</max_session_timeout>
@@ -187,10 +192,6 @@ data:
 
         {{- if .Values.clickhouse.configmap.max_open_files }}
         <max_open_files>{{ .Values.clickhouse.configmap.max_open_files }}</max_open_files>
-        {{- end }}
-
-        {{- if .Values.clickhouse.configmap.interserver_http_host }}
-        <interserver_http_host>{{ .Values.clickhouse.configmap.interserver_http_host }}</interserver_http_host>
         {{- end }}
 
         {{- if .Values.clickhouse.configmap.merge_tree.enabled }}

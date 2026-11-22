@@ -69,7 +69,10 @@ spec:
         command:
           - /bin/bash
           - -c
-          - export SHARD=${HOSTNAME##*-} && /entrypoint.sh
+          - |
+            export SHARD=${HOSTNAME##*-}
+            export CLICKHOUSE_INTERSERVER_HTTP_HOST="${HOSTNAME}.{{ include "clickhouse.fullname" . }}-headless.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}"
+            exec /entrypoint.sh
         ports:
         {{- if .Values.clickhouse.metrics.enabled }}
         - name: metrics

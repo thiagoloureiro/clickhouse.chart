@@ -26,7 +26,7 @@ A Helm chart for deploying ClickHouse on Kubernetes. ClickHouse is an open-sourc
 
 | | |
 |---|---|
-| **Chart Version** | `26.10` |
+| **Chart Version** | `26.11` |
 | **App Version** | `26.10.3.7` |
 | **Default Image** | `clickhouse/clickhouse-server:26.10.3.7` |
 | **DHI Image** | `dhi.io/clickhouse-server:26.10` |
@@ -59,13 +59,16 @@ The following table lists the most important configurable parameters and their d
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `clickhouse.replicas` | Number of ClickHouse replicas | `3` |
+| `clickhouse.replicas` | Number of ClickHouse shards | `3` |
 | `clickhouse.image` | ClickHouse image | `clickhouse/clickhouse-server` |
 | `clickhouse.imageVersion` | ClickHouse image version | `26.10.3.7` |
 | `clickhouse.dhi.enabled` | Use Docker Hardened Images from `dhi.io` | `false` |
 | `clickhouse.dhi.image` | DHI image repository | `dhi.io/clickhouse-server` |
 | `clickhouse.dhi.imageVersion` | DHI image tag | `26.10` |
 | `clickhouse.imagePullSecrets` | Registry pull secrets (required when DHI is enabled) | `[]` |
+| `clickhouse.configmap.keeper.enabled` | Deploy ClickHouse Keeper (required for Replicated* sync) | `false` |
+| `clickhouse.configmap.remote_servers.internal_replication` | Distributed writes one replica; Replicated* syncs | `true` |
+| `clickhouse.configmap.remote_servers.replica.backup.enabled` | Second StatefulSet per shard (`clickhouse-replica-*`) | `false` |
 | `clickhouse.persistentVolumeClaim.enabled` | Enable persistent volumes | `true` |
 | `clickhouse.persistentVolumeClaim.dataPersistentVolume.storage` | Data volume size | `100Gi` |
 | `clickhouse.metrics.enabled` | Enable Prometheus metrics | `true` |
@@ -104,6 +107,36 @@ clickhouse:
 ```
 
 When `dhi.enabled` is `true`, ClickHouse and Keeper pods pull `dhi.io/clickhouse-server:26.10`. Install fails if `imagePullSecrets` is empty.
+
+## Replication / HA
+
+Cluster membership alone does **not** sync table data. For real replica sync:
+
+1. Enable Keeper (or external ZooKeeper)
+2. Enable the backup StatefulSet (`remote_servers.replica.backup.enabled`)
+3. Keep `internal_replication: true` (default)
+4. Create tables with `ReplicatedMergeTree` (or similar) using `{shard}` / `{replica}` macros
+
+```bash
+helm install clickhouse clickhouse/clickhouse \
+  --set clickhouse.configmap.keeper.enabled=true \
+  --set clickhouse.configmap.remote_servers.replica.backup.enabled=true
+```
+
+Example table:
+
+```sql
+CREATE TABLE events ON CLUSTER '{cluster}'
+(
+  id UInt64,
+  ts DateTime
+)
+ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/events', '{replica}')
+PARTITION BY toYYYYMM(ts)
+ORDER BY (id, ts);
+```
+
+Macros `{cluster}`, `{shard}`, and `{replica}` are injected automatically (`cluster` = release fullname).
 
 ## Examples
 

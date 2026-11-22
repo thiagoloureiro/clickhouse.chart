@@ -11,6 +11,10 @@ data:
   metrica.xml: |-
     <?xml version="1.0"?>
     <yandex>
+        {{- if and .Values.clickhouse.configmap.zookeeper_servers.enabled .Values.clickhouse.configmap.keeper.enabled }}
+        {{- fail "Enable either clickhouse.configmap.zookeeper_servers or clickhouse.configmap.keeper, not both. ClickHouse uses the <zookeeper> section for either coordination backend." }}
+        {{- end }}
+        {{- /* ClickHouse uses <zookeeper> for both ZooKeeper and ClickHouse Keeper */}}
         {{- if .Values.clickhouse.configmap.zookeeper_servers.enabled }}
         <zookeeper-servers>
             {{- range .Values.clickhouse.configmap.zookeeper_servers.config }}
@@ -30,10 +34,8 @@ data:
             <root>{{ .Values.clickhouse.configmap.zookeeper_servers.root }}</root>
             <identity>{{ .Values.clickhouse.configmap.zookeeper_servers.identity }}</identity>
         </zookeeper-servers>
-        {{- end }}
-
-        {{- if .Values.clickhouse.configmap.keeper.enabled }}
-        <keeper-servers>
+        {{- else if .Values.clickhouse.configmap.keeper.enabled }}
+        <zookeeper-servers>
             {{- range untilStep 0 (int .Values.clickhouse.configmap.keeper.replicas) 1 }}
             <node>
                 <host>{{ include "clickhouse.fullname" $ }}-keeper-{{ . }}.{{ include "clickhouse.fullname" $ }}-keeper-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}</host>
@@ -42,7 +44,7 @@ data:
             {{- end }}
             <session_timeout_ms>{{ .Values.clickhouse.configmap.keeper.session_timeout_ms }}</session_timeout_ms>
             <operation_timeout_ms>{{ .Values.clickhouse.configmap.keeper.operation_timeout_ms }}</operation_timeout_ms>
-        </keeper-servers>
+        </zookeeper-servers>
         {{- end }}
 
         {{- if .Values.clickhouse.configmap.remote_servers.enabled }}
@@ -50,7 +52,7 @@ data:
             <{{ include "clickhouse.fullname" . }}>
             {{- range untilStep 0 (int .Values.clickhouse.replicas) 1 }}
                 <shard>
-                    <internal_replication>{{ $.Values.clickhouse.configmap.remote_servers.internal_replication | default "false" }}</internal_replication>
+                    <internal_replication>{{ $.Values.clickhouse.configmap.remote_servers.internal_replication }}</internal_replication>
                     <replica>
                         <host>{{ include "clickhouse.fullname" $ }}-{{ . }}.{{ include "clickhouse.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.clusterDomain }}</host>
                         <port>{{ $.Values.clickhouse.tcp_port}}</port>
@@ -92,6 +94,7 @@ data:
         {{- end }}
 
         <macros>
+            <cluster>{{ include "clickhouse.fullname" . }}</cluster>
             <replica from_env="HOSTNAME"></replica>
             <shard from_env="SHARD"></shard>
         </macros>
