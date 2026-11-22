@@ -2,7 +2,7 @@ apiVersion: v1
 appVersion: "26.10.3.7"
 description: ClickHouse is an open-source column-oriented OLAP database (Online Analytical Processing) designed for very fast analytical queries on large volumes of data.
 home: https://github.com/thiagoloureiro/clickhouse.chart
-icon: https://thiagoloureiro.github.io/clickhouse.chart/docs/icon.png
+icon: https://raw.githubusercontent.com/thiagoloureiro/clickhouse.chart/main/docs/icon.png
 keywords:
   - clickhouse
   - olap
@@ -10,6 +10,6 @@ keywords:
 name: clickhouse
 sources:
   - https://github.com/thiagoloureiro/clickhouse.chart
-version: '26.13'
+version: '26.14'
 maintainers:
   - name: thiagoloureiro
