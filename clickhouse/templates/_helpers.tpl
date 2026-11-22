@@ -94,3 +94,35 @@ dhi.io requires authentication, so imagePullSecrets must be set when DHI is enab
     {{- end }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Pod securityContext for ClickHouse pods.
+DHI images run as uid/gid 1001; when DHI is enabled and no podSecurityContext is set,
+default to that user so PVC ownership matches.
+*/}}
+{{- define "clickhouse.podSecurityContext" }}
+{{- if .Values.clickhouse.podSecurityContext }}
+      securityContext:
+        {{- toYaml .Values.clickhouse.podSecurityContext | nindent 8 }}
+{{- else if .Values.clickhouse.dhi.enabled }}
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+{{- end }}
+{{- end }}
+
+{{/*
+Pod securityContext for Keeper pods.
+*/}}
+{{- define "clickhouse.keeper.podSecurityContext" }}
+{{- if .Values.clickhouse.configmap.keeper.podSecurityContext }}
+      securityContext:
+        {{- toYaml .Values.clickhouse.configmap.keeper.podSecurityContext | nindent 8 }}
+{{- else if .Values.clickhouse.dhi.enabled }}
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+{{- end }}
+{{- end }}

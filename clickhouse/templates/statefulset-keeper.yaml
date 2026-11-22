@@ -28,10 +28,7 @@ spec:
     {{- with .Values.clickhouse.configmap.keeper.priorityClassName }}
       priorityClassName: {{ . }}
     {{- end }}
-    {{- with .Values.clickhouse.configmap.keeper.podSecurityContext }}
-      securityContext:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+{{- include "clickhouse.keeper.podSecurityContext" . }}
     {{- if .Values.affinity }}
       affinity:
 {{ toYaml .Values.affinity | indent 8 }}
@@ -55,8 +52,10 @@ spec:
             # Create config directory if it doesn't exist
             mkdir -p /etc/clickhouse-keeper/config.d
             # Copy base config and replace server_id placeholder
-            cp /tmp/keeper_config.xml /etc/clickhouse-keeper/config.d/keeper_config.xml
-            sed -i "s/__SERVER_ID__/$SERVER_ID/g" /etc/clickhouse-keeper/config.d/keeper_config.xml
+            # Pure bash (DHI images do not ship sed)
+            while IFS= read -r line || [ -n "$line" ]; do
+              printf '%s\n' "${line//__SERVER_ID__/$SERVER_ID}"
+            done < /tmp/keeper_config.xml > /etc/clickhouse-keeper/config.d/keeper_config.xml
         volumeMounts:
         - name: {{ include "clickhouse.fullname" . }}-keeper-config
           mountPath: /etc/clickhouse-keeper/config.d
@@ -87,8 +86,8 @@ spec:
               exit 1
             fi
             
-            # Verify server_id was replaced
-            if grep -q "__SERVER_ID__" "$CONFIG_FILE"; then
+            # Verify server_id was replaced (avoid grep; missing in DHI images)
+            if [[ "$(<"$CONFIG_FILE")" == *"__SERVER_ID__"* ]]; then
               echo "ERROR: Server ID placeholder not replaced in config!"
               exit 1
             fi

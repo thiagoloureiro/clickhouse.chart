@@ -47,10 +47,7 @@ spec:
       {{- end }}
       {{- end }}
     spec:
-    {{- with .Values.clickhouse.podSecurityContext }}
-      securityContext:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+{{- include "clickhouse.podSecurityContext" . }}
     {{- if .Values.affinity }}
       affinity:
 {{ toYaml .Values.affinity | indent 8 }}

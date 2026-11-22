@@ -112,6 +112,7 @@ data:
             <table>trace_log</table>
             <!-- optional: only if you want it on but with very infrequent flush -->
             <flush_interval_milliseconds>60000</flush_interval_milliseconds>
+            <ttl>event_date + INTERVAL 1 DAY DELETE</ttl>
         </trace_log>
 
         <query_log>
@@ -120,6 +121,7 @@ data:
             <table>query_log</table>
             <partition_by>toYYYYMM(event_date)</partition_by>
             <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+            <ttl>event_date + INTERVAL 1 DAY DELETE</ttl>
         </query_log>
 
         <query_thread_log>
@@ -128,18 +130,8 @@ data:
             <table>query_thread_log</table>
             <partition_by>toYYYYMM(event_date)</partition_by>
             <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+            <ttl>event_date + INTERVAL 1 DAY DELETE</ttl>
         </query_thread_log>
-
-        <!-- Retention for all ClickHouse system logs -->
-        <query_log_ttl>1d</query_log_ttl>
-        <query_thread_log_ttl>1d</query_thread_log_ttl>
-        <part_log_ttl>1d</part_log_ttl>
-        <trace_log_ttl>1d</trace_log_ttl>
-        <metric_log_ttl>1d</metric_log_ttl>
-        <asynchronous_metric_log_ttl>1d</asynchronous_metric_log_ttl>
-
-        <!-- OpenTelemetry system logs -->
-        <opentelemetry_span_log_ttl>1d</opentelemetry_span_log_ttl>
 
         <distributed_ddl>
             <path>/clickhouse/task_queue/ddl</path>
