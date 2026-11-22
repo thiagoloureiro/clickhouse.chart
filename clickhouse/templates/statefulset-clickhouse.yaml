@@ -61,15 +61,10 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
     {{- end }}
-    {{- if .Values.clickhouse.imagePullSecrets }}
-      imagePullSecrets:
-    {{- range .Values.clickhouse.imagePullSecrets }}
-      - name: {{ . | quote }}
-    {{- end }}
-    {{- end }}
+{{- include "clickhouse.imagePullSecrets" . }}
       containers:
       - name: {{ include "clickhouse.fullname" . }}
-        image: {{ .Values.clickhouse.image }}:{{ .Values.clickhouse.imageVersion | default .Chart.AppVersion }}
+        image: {{ include "clickhouse.image" . }}
         imagePullPolicy: {{ .Values.clickhouse.imagePullPolicy }}
         command:
           - /bin/bash

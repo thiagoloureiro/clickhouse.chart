@@ -238,13 +238,42 @@
         "imageVersion": {
           "type": "string",
           "description": "Clickhouse image version",
-          "default": "25.12"
+          "default": "26.10.3.7"
         },
         "imagePullPolicy": {
           "type": "string",
           "description": "Image pull policy",
           "enum": ["Always", "Never", "IfNotPresent"],
           "default": "IfNotPresent"
+        },
+        "dhi": {
+          "type": "object",
+          "description": "Docker Hardened Images (DHI) settings. When enabled, uses dhi.io/clickhouse-server and requires imagePullSecrets",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Use Docker Hardened Images from dhi.io",
+              "default": false
+            },
+            "image": {
+              "type": "string",
+              "description": "DHI image repository",
+              "default": "dhi.io/clickhouse-server"
+            },
+            "imageVersion": {
+              "type": "string",
+              "description": "DHI image tag",
+              "default": "26.10"
+            }
+          }
+        },
+        "imagePullSecrets": {
+          "type": "array",
+          "description": "Image pull secrets (required when dhi.enabled is true)",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         },
         "priorityClassName": {
           "type": ["string", "null"],

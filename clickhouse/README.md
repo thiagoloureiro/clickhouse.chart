@@ -1,5 +1,13 @@
 # ClickHouse Helm Chart
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/clickhouse)](https://artifacthub.io/packages/search?repo=clickhouse)
+[![Helm](https://img.shields.io/badge/Helm-3+-0F1689?logo=helm&logoColor=white)](https://helm.sh)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-1.19+-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io)
+[![ClickHouse](https://img.shields.io/badge/ClickHouse-26.10-FFCC01?logo=clickhouse&logoColor=black)](https://clickhouse.com)
+[![DHI](https://img.shields.io/badge/DHI-optional-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/dhi/)
+[![Release](https://img.shields.io/github/v/release/thiagoloureiro/clickhouse.chart?include_prereleases&sort=semver&label=release)](https://github.com/thiagoloureiro/clickhouse.chart/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+
 A Helm chart for deploying ClickHouse on Kubernetes. ClickHouse is an open-source column-oriented database management system capable of real-time generation of analytical data reports using SQL queries.
 
 ## Features
@@ -8,16 +16,21 @@ A Helm chart for deploying ClickHouse on Kubernetes. ClickHouse is an open-sourc
 - **Persistent Storage**: Configurable persistent volumes for data and logs
 - **Metrics & Monitoring**: Built-in Prometheus metrics exporter with optional ServiceMonitor support
 - **Web Interface**: Optional Tabix web UI for managing ClickHouse
+- **Docker Hardened Images (DHI)**: Optional `dhi.io` images for a smaller, hardened attack surface
 - **Flexible Configuration**: Extensive configuration options via values.yaml
-- **ZooKeeper Support**: Optional ZooKeeper integration for replicated tables
+- **ZooKeeper / Keeper Support**: Optional ZooKeeper or ClickHouse Keeper for replicated tables
 - **Ingress Support**: Configurable ingress for HTTP access
 - **Resource Management**: Configurable resource limits and requests
 
 ## Chart Details
 
-- **Chart Version**: 26.1
-- **App Version**: 26.1
-- **Maintainer**: thiagoloureiro
+| | |
+|---|---|
+| **Chart Version** | `26.10` |
+| **App Version** | `26.10.3.7` |
+| **Default Image** | `clickhouse/clickhouse-server:26.10.3.7` |
+| **DHI Image** | `dhi.io/clickhouse-server:26.10` |
+| **Maintainer** | thiagoloureiro |
 
 ## Installation
 
@@ -48,7 +61,11 @@ The following table lists the most important configurable parameters and their d
 |-----------|-------------|---------|
 | `clickhouse.replicas` | Number of ClickHouse replicas | `3` |
 | `clickhouse.image` | ClickHouse image | `clickhouse/clickhouse-server` |
-| `clickhouse.imageVersion` | ClickHouse image version | `25.12` |
+| `clickhouse.imageVersion` | ClickHouse image version | `26.10.3.7` |
+| `clickhouse.dhi.enabled` | Use Docker Hardened Images from `dhi.io` | `false` |
+| `clickhouse.dhi.image` | DHI image repository | `dhi.io/clickhouse-server` |
+| `clickhouse.dhi.imageVersion` | DHI image tag | `26.10` |
+| `clickhouse.imagePullSecrets` | Registry pull secrets (required when DHI is enabled) | `[]` |
 | `clickhouse.persistentVolumeClaim.enabled` | Enable persistent volumes | `true` |
 | `clickhouse.persistentVolumeClaim.dataPersistentVolume.storage` | Data volume size | `100Gi` |
 | `clickhouse.metrics.enabled` | Enable Prometheus metrics | `true` |
@@ -57,6 +74,36 @@ The following table lists the most important configurable parameters and their d
 | `timezone` | Timezone for the cluster | `UTC` |
 
 For a complete list of configuration options, see [values.yaml](clickhouse/values.yaml).
+
+## Docker Hardened Images (DHI)
+
+By default the chart uses the official ClickHouse image. To switch to [Docker Hardened Images](https://docs.docker.com/dhi/), enable DHI and provide an `imagePullSecrets` entry authenticated against `dhi.io`.
+
+```bash
+# Create a pull secret for dhi.io (Docker Hub credentials work)
+kubectl create secret docker-registry dhi-registry \
+  --docker-server=dhi.io \
+  --docker-username=<DOCKER_USER> \
+  --docker-password=<DOCKER_PAT>
+```
+
+```bash
+helm install clickhouse clickhouse/clickhouse \
+  --set clickhouse.dhi.enabled=true \
+  --set clickhouse.imagePullSecrets[0]=dhi-registry
+```
+
+Or in values:
+
+```yaml
+clickhouse:
+  dhi:
+    enabled: true
+  imagePullSecrets:
+    - dhi-registry
+```
+
+When `dhi.enabled` is `true`, ClickHouse and Keeper pods pull `dhi.io/clickhouse-server:26.10`. Install fails if `imagePullSecrets` is empty.
 
 ## Examples
 
@@ -161,6 +208,7 @@ This script will:
 
 - [ClickHouse Documentation](https://clickhouse.com/docs/)
 - [ClickHouse GitHub](https://github.com/ClickHouse/ClickHouse)
+- [Docker Hardened Images](https://docs.docker.com/dhi/)
 - [Helm Documentation](https://helm.sh/docs/)
 
 ## License
@@ -174,4 +222,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Support
 
 For issues and questions, please open an issue on the [GitHub repository](https://github.com/thiagoloureiro/clickhouse.chart).
-

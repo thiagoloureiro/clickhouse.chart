@@ -40,15 +40,10 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
     {{- end }}
-    {{- if .Values.clickhouse.imagePullSecrets }}
-      imagePullSecrets:
-    {{- range .Values.clickhouse.imagePullSecrets }}
-      - name: {{ . | quote }}
-    {{- end }}
-    {{- end }}
+{{- include "clickhouse.imagePullSecrets" . }}
       initContainers:
       - name: init-keeper-config
-        image: {{ .Values.clickhouse.configmap.keeper.image }}:{{ .Values.clickhouse.configmap.keeper.imageVersion | default .Chart.AppVersion }}
+        image: {{ include "clickhouse.keeper.image" . }}
         imagePullPolicy: {{ .Values.clickhouse.configmap.keeper.imagePullPolicy }}
         command:
           - /bin/bash
@@ -69,7 +64,7 @@ spec:
           mountPath: /tmp
       containers:
       - name: {{ include "clickhouse.fullname" . }}-keeper
-        image: {{ .Values.clickhouse.configmap.keeper.image }}:{{ .Values.clickhouse.configmap.keeper.imageVersion | default .Chart.AppVersion }}
+        image: {{ include "clickhouse.keeper.image" . }}
         imagePullPolicy: {{ .Values.clickhouse.configmap.keeper.imagePullPolicy }}
         command:
           - /bin/bash

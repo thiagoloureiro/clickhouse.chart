@@ -124,9 +124,26 @@ clickhouse:
   ##   Example: If set to "3", you get 3 main pods + 3 replica pods (if backup enabled) = 6 total ClickHouse pods
   replicas: "3"
   ## Clickhouse image configuration.
+  ## Default: official ClickHouse image. Set dhi.enabled to use Docker Hardened Images.
   image: "clickhouse/clickhouse-server"
-  imageVersion: "26.5"
+  imageVersion: "26.10.3.7"
   imagePullPolicy: "IfNotPresent"
+  ##
+  ## Docker Hardened Images (DHI) from dhi.io
+  ## Requires a registry pull secret authenticated against dhi.io
+  ## Example:
+  ##   dhi:
+  ##     enabled: true
+  ##   imagePullSecrets:
+  ##     - dhi-registry
+  dhi:
+    enabled: false
+    image: "dhi.io/clickhouse-server"
+    imageVersion: "26.10"
+  ##
+  ## ImagePullSecrets for private registries (required when dhi.enabled is true)
+  ## More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod
+  imagePullSecrets: []
 
   priorityClassName: ~
 
@@ -300,8 +317,9 @@ clickhouse:
       ##   - This is independent of your ClickHouse server replicas
       replicas: 3
       ## Keeper image configuration (uses same image as ClickHouse by default)
+      ## When clickhouse.dhi.enabled is true, Keeper also uses the DHI image
       image: "clickhouse/clickhouse-server"
-      imageVersion: "26.5"
+      imageVersion: "26.10.3.7"
       imagePullPolicy: "IfNotPresent"
       ## Keeper ports
       client_port: 2181
